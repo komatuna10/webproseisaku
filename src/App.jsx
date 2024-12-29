@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CameraCapture from "./CameraCapture"; // カメラ機能のコンポーネント
 
-// ファイルを Base64 に変換する関数
-const convertToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 const App = ({ user }) => {
   const [folders, setFolders] = useState(
     JSON.parse(localStorage.getItem(`${user}_folders`)) || []
@@ -18,7 +8,7 @@ const App = ({ user }) => {
   const [folderName, setFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [diary, setDiary] = useState({ photo: "", name: "", review: "", rating: 3 });
-  const [isCameraMode, setIsCameraMode] = useState(false);
+  const [isCameraMode, setIsCameraMode] = useState(false); // カメラモード管理
 
   useEffect(() => {
     return () => {
@@ -57,6 +47,33 @@ const App = ({ user }) => {
     }
   };
 
+  const deleteDiaryEntry = (index) => {
+    if (window.confirm("本当にこの日記を削除しますか？")) {
+      const updatedFolders = folders.map((folder) =>
+        folder.name === selectedFolder.name
+          ? {
+              ...folder,
+              entries: folder.entries.filter((_, entryIndex) => entryIndex !== index),
+            }
+          : folder
+      );
+      saveFolders(updatedFolders); // ローカルストレージに保存
+      setSelectedFolder(
+        updatedFolders.find((folder) => folder.name === selectedFolder.name) || null
+      ); // 選択中のフォルダを更新
+    }
+  };
+
+  const deleteFolder = (folderName) => {
+    if (window.confirm(`フォルダ「${folderName}」を削除しますか？`)) {
+      const updatedFolders = folders.filter((folder) => folder.name !== folderName);
+      saveFolders(updatedFolders);
+      if (selectedFolder && selectedFolder.name === folderName) {
+        setSelectedFolder(null); // 現在選択中のフォルダが削除された場合、選択を解除
+      }
+    }
+  };
+
   const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -67,7 +84,7 @@ const App = ({ user }) => {
 
   const handleCapture = (photo) => {
     setDiary({ ...diary, photo });
-    setIsCameraMode(false);
+    setIsCameraMode(false); // カメラモードを終了
   };
 
   return (
@@ -98,20 +115,10 @@ const App = ({ user }) => {
             <h2>{selectedFolder.name} - 日記追加</h2>
             <div className="diary-form">
               {/* 画像プレビュー */}
-              {diary.photo && (
-                <img
-                  src={diary.photo}
-                  alt="写真プレビュー"
-                  style={{ width: "150px", height: "auto", borderRadius: "8px" }}
-                />
-              )}
+              {diary.photo && <img src={diary.photo} alt="写真プレビュー" style={{ width: "100px" }} />}
 
               {/* 写真選択 & カメラ撮影 */}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-              />
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} />
               <button onClick={() => setIsCameraMode(!isCameraMode)}>
                 {isCameraMode ? "カメラを閉じる" : "カメラで撮影"}
               </button>
@@ -151,12 +158,7 @@ const App = ({ user }) => {
                     <img
                       src={entry.photo}
                       alt="写真"
-                      style={{
-                        width: "150px",
-                        height: "auto",
-                        objectFit: "cover",
-                        borderRadius: "8px",
-                      }}
+                      style={{ width: "100px", height: "auto", objectFit: "cover" }}
                     />
                   )}
                   <p>お店の名前: {entry.name}</p>
@@ -171,6 +173,15 @@ const App = ({ user }) => {
       </div>
     </div>
   );
+};
+
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 };
 
 export default App;
