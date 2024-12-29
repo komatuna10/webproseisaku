@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import CameraCapture from "./CameraCapture";  // カメラ機能のコンポーネント
+import CameraCapture from "./CameraCapture"; // カメラ機能のコンポーネント
+
+// ファイルを Base64 に変換する関数
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
 
 const App = ({ user }) => {
   const [folders, setFolders] = useState(
@@ -8,7 +18,7 @@ const App = ({ user }) => {
   const [folderName, setFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [diary, setDiary] = useState({ photo: "", name: "", review: "", rating: 3 });
-  const [isCameraMode, setIsCameraMode] = useState(false); // カメラモード管理
+  const [isCameraMode, setIsCameraMode] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -57,7 +67,7 @@ const App = ({ user }) => {
 
   const handleCapture = (photo) => {
     setDiary({ ...diary, photo });
-    setIsCameraMode(false);  // カメラモードを終了
+    setIsCameraMode(false);
   };
 
   return (
@@ -88,7 +98,13 @@ const App = ({ user }) => {
             <h2>{selectedFolder.name} - 日記追加</h2>
             <div className="diary-form">
               {/* 画像プレビュー */}
-              {diary.photo && <img src={diary.photo} alt="写真プレビュー" style={{ width: "100px" }} />}
+              {diary.photo && (
+                <img
+                  src={diary.photo}
+                  alt="写真プレビュー"
+                  style={{ width: "150px", height: "auto", borderRadius: "8px" }}
+                />
+              )}
 
               {/* 写真選択 & カメラ撮影 */}
               <input
@@ -135,7 +151,12 @@ const App = ({ user }) => {
                     <img
                       src={entry.photo}
                       alt="写真"
-                      style={{ width: "100px", height: "auto", objectFit: "cover" }}
+                      style={{
+                        width: "150px",
+                        height: "auto",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                      }}
                     />
                   )}
                   <p>お店の名前: {entry.name}</p>
