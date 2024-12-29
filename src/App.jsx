@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import CameraCapture from "./CameraCapture"; // カメラ機能のコンポーネント
+import CameraCapture from "./CameraCapture"; 
 
 const App = ({ user }) => {
   const [folders, setFolders] = useState(
@@ -8,12 +8,12 @@ const App = ({ user }) => {
   const [folderName, setFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [diary, setDiary] = useState({ photo: "", name: "", review: "", rating: 3 });
-  const [isCameraMode, setIsCameraMode] = useState(false); // カメラモード管理
+  const [isCameraMode, setIsCameraMode] = useState(false); 
 
   useEffect(() => {
     return () => {
       if (diary.photo) {
-        URL.revokeObjectURL(diary.photo); // メモリリークを防ぐ
+        URL.revokeObjectURL(diary.photo); 
       }
     };
   }, [diary.photo]);
@@ -57,10 +57,10 @@ const App = ({ user }) => {
             }
           : folder
       );
-      saveFolders(updatedFolders); // ローカルストレージに保存
+      saveFolders(updatedFolders); 
       setSelectedFolder(
         updatedFolders.find((folder) => folder.name === selectedFolder.name) || null
-      ); // 選択中のフォルダを更新
+      ); 
     }
   };
 
@@ -69,7 +69,7 @@ const App = ({ user }) => {
       const updatedFolders = folders.filter((folder) => folder.name !== folderName);
       saveFolders(updatedFolders);
       if (selectedFolder && selectedFolder.name === folderName) {
-        setSelectedFolder(null); // 現在選択中のフォルダが削除された場合、選択を解除
+        setSelectedFolder(null); 
       }
     }
   };
@@ -84,7 +84,7 @@ const App = ({ user }) => {
 
   const handleCapture = (photo) => {
     setDiary({ ...diary, photo });
-    setIsCameraMode(false); // カメラモードを終了
+    setIsCameraMode(false); 
   };
 
   return (
@@ -114,16 +114,13 @@ const App = ({ user }) => {
           <>
             <h2>{selectedFolder.name} - 日記追加</h2>
             <div className="diary-form">
-              {/* 画像プレビュー */}
               {diary.photo && <img src={diary.photo} alt="写真プレビュー" style={{ width: "100px" }} />}
 
-              {/* 写真選択 & カメラ撮影 */}
               <input type="file" accept="image/*" onChange={handlePhotoUpload} />
               <button onClick={() => setIsCameraMode(!isCameraMode)}>
                 {isCameraMode ? "カメラを閉じる" : "カメラで撮影"}
               </button>
 
-              {/* カメラモードの切り替え */}
               {isCameraMode && <CameraCapture onCapture={handleCapture} />}
 
               <input
