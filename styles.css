@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+  
+header {
+    background-color: #ff7f50;
+    color: white;
+    padding: 1em;
+    text-align: center;
+    font-size: 1.5em;
+}
+  
+.container {
+    padding: 20px;
+}
+  
+.diary-form input,
+.diary-form textarea,
+.diary-form select,
+.diary-form button {
+  display: block;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.folder-list {
+  list-style: none;
+  padding: 0;
+}
+
+.folder-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.folder-item img {
+  max-width: 100px;
+  height: auto;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.folder-item button {
+  background-color: #ff7f50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.folder-item button:hover {
+  background-color: #ff4500;
+}
